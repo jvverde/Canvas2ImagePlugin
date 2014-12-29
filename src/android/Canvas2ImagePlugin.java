@@ -38,6 +38,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 		if (action.equals(ACTION)) {
 
 			String base64 = data.optString(0);
+			String ext = data.optString(1);
 			if (base64.equals("")) // isEmpty() requires API level 9
 				callbackContext.error("Missing base64 string");
 			
@@ -50,7 +51,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 			} else {
 				
 				// Save the image
-				File imageFile = savePhoto(bmp);
+				File imageFile = savePhoto(bmp,ext);
 				if (imageFile == null)
 					callbackContext.error("Error while saving image");
 				
@@ -66,9 +67,12 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 		}
 	}
 
-	private File savePhoto(Bitmap bmp) {
+	private File savePhoto(Bitmap bmp, String ext) {
 		File retVal = null;
 		
+		if (ext.equals("")){
+			ext = ".png";
+		}
 		try {
 			Calendar c = Calendar.getInstance();
 			String date = "" + c.get(Calendar.DAY_OF_MONTH)
@@ -99,7 +103,7 @@ public class Canvas2ImagePlugin extends CordovaPlugin {
 				folder = Environment.getExternalStorageDirectory();
 			}
 			
-			File imageFile = new File(folder, "c2i_" + date.toString() + ".png");
+			File imageFile = new File(folder, "c2i_" + date.toString() + ext);
 
 			FileOutputStream out = new FileOutputStream(imageFile);
 			bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
